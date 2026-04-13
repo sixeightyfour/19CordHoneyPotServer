@@ -11,6 +11,7 @@ except ImportError:
 
 DISCORD_TOKEN = os.getenv("DISCORD_TOKEN")
 HONEYPOT_CHANNEL_ID = int(os.getenv("HONEYPOT_CHANNEL_ID", "0"))
+LOG_CHANNEL_ID = int(os.getenv("LOG_CHANNEL_ID", "0"))
 
 intents = discord.Intents.default()
 intents.members = True          # Required to Kick
@@ -45,10 +46,23 @@ async def on_message(message: discord.Message):
 
     # Checks if Message was Sent in Restricted Channel
     if message.channel.id == HONEYPOT_CHANNEL_ID:
+
+        # Logs Username and Message for Appeal Purposes
+        user_info = f"User: {message.author} (ID: {message.author.id})"
+        content_info = f"Message: {message.content}"
+        
         try:
             await message.author.kick(reason="Honeypot: Unauthorized message in restricted channel.")
             total_kicks += 1
             print(f"[KICKED] {message.author} ({message.author.id})")
+
+            # Produces Message in Dedicated Log Channel Using user_info and content_info
+            log_channel = client.get_channel(LOG_CHANNEL_ID)
+            if log_channel:
+                log_embed = discord.Embed(title="Honeypot Catch!", color=discord.Color.red())
+                log_embed.add_field(name="Offender", value=user_info, inline=False)
+                log_embed.add_field(name="Sent Content", value=content_info or "[No Text/Embed]", inline=False)
+                await log_channel.send(embed=log_embed)
             
             # Deletes Message to Keep Channel Clean
             try:
