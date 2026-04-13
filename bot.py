@@ -83,7 +83,7 @@ async def on_message(message: discord.Message):
             
                 if log_channel:
                     # Attatches Embed (if Applicable)
-                    await log_channel.send(embed=log_embed, file=log_files)
+                    await log_channel.send(embed=log_embed, files=log_files)
             
             # Deletes Message to Keep Channel Clean
             try:
