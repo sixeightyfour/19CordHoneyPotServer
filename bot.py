@@ -29,7 +29,7 @@ def build_status_embed() -> discord.Embed:
 
 @client.event
 async def on_ready():
-    print(f"Honeypot active as {client.user} ({client.user.id})")
+    print(f"Honey pot active as {client.user} ({client.user.id})")
     try:
         synced = await tree.sync()
         print(f"Synced {len(synced)} slash command(s).")
@@ -62,21 +62,22 @@ async def on_message(message: discord.Message):
                 log_file = None
                 if message.attachments:
                     attachment = message.attachments[0]
-                    # Convert the attachment into a file object to re-upload
+                    # Converts Attachment into File Object to Re-Upload
                     log_file = await attachment.to_file()
-                    # If it's an image, tell the embed to display the re-uploaded file
+                    # If an image, Embeds Re-Uploaded File
                     if any(attachment.filename.lower().endswith(ext) for ext in ['.png', '.jpg', '.jpeg', '.gif', '.webp']):
                         log_embed.set_image(url=f"attachment://{attachment.filename}")
 
-                await message.author.kick(reason="Honeypot: Unauthorized message in restricted channel.")
+                # Kicks User
+                await message.author.kick(reason="Honey Pot: Unauthorized message in restricted channel.")
                 total_kicks += 1
                 print(f"[KICKED] {message.author} ({message.author.id})")
                 
-                # 4. Send to log channel
+                # Sends Log to Log Channel
                 log_channel = client.get_channel(LOG_CHANNEL_ID) or await client.fetch_channel(LOG_CHANNEL_ID)
             
                 if log_channel:
-                    # We send the embed and the file together
+                    # Attatches Embed (if Applicable)
                     await log_channel.send(embed=log_embed, file=log_file)
             
             # Deletes Message to Keep Channel Clean
