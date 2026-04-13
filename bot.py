@@ -56,8 +56,11 @@ async def on_message(message: discord.Message):
             log_channel = client.get_channel(LOG_CHANNEL_ID)
             if log_channel:
                 log_embed = discord.Embed(title="Honey Pot Kick Log", color=discord.Color.red())
-                log_embed.add_field(name="Offender", value=user_info, inline=False)
-                log_embed.add_field(name="Sent Content", value=content_info or "[No Text/Embed]", inline=False)
+                log_header = (
+                    f" **Honey Pot Kick Log**\n"
+                    f"**Offender:** {message.author} (ID: {message.author.id})\n"
+                    f"**Content:** {message.content or '[No Text]'}"
+                )
                 
                 log_files = []
                 image_embedded = False
@@ -77,13 +80,11 @@ async def on_message(message: discord.Message):
                 await message.author.kick(reason="Honey Pot: Unauthorized message in restricted channel.")
                 total_kicks += 1
                 print(f"[KICKED] {message.author} ({message.author.id})")
-                
-                # Sends Log, including Files
-                log_channel = client.get_channel(LOG_CHANNEL_ID) or await client.fetch_channel(LOG_CHANNEL_ID)
-            
-                if log_channel:
-                    # Attatches Embed (if Applicable)
-                    await log_channel.send(embed=log_embed, files=log_files)
+
+                # Embeds File within Log
+                target_log = client.get_channel(LOG_CHANNEL_ID) or await client.fetch_channel(LOG_CHANNEL_ID)
+                if target_log:
+                    await target_log.send(content=log_header, embed=log_embed, files=log_files)
             
             # Deletes Message to Keep Channel Clean
             try:
