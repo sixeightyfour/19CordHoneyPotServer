@@ -59,26 +59,31 @@ async def on_message(message: discord.Message):
                 log_embed.add_field(name="Offender", value=user_info, inline=False)
                 log_embed.add_field(name="Sent Content", value=content_info or "[No Text/Embed]", inline=False)
                 
-                log_file = None
-                if message.attachments:
-                    attachment = message.attachments[0]
-                    # Converts Attachment into File Object to Re-Upload
-                    log_file = await attachment.to_file()
-                    # If an image, Embeds Re-Uploaded File
-                    if any(attachment.filename.lower().endswith(ext) for ext in ['.png', '.jpg', '.jpeg', '.gif', '.webp']):
-                        log_embed.set_image(url=f"attachment://{attachment.filename}")
+                log_files = []
+                image_embedded = False
+
+                for attachment in message.attachments:
+                    # Download each File to Bot Memory
+                    file_to_upload = await attachment.to_file()
+                    log_files.append(file_to_upload)
+
+                    # Check if Attachment is an Image to Display in Embed
+                    if not image_embedded:
+                        if any(attachment.filename.lower().endswith(ext) for ext in ['.png', '.jpg', '.jpeg', '.gif', '.webp']):
+                            log_embed.set_image(url=f"attachment://{attachment.filename}")
+                            image_embedded = True # Only Embed First Image Found
 
                 # Kicks User
                 await message.author.kick(reason="Honey Pot: Unauthorized message in restricted channel.")
                 total_kicks += 1
                 print(f"[KICKED] {message.author} ({message.author.id})")
                 
-                # Sends Log to Log Channel
+                # Sends Log, including Files
                 log_channel = client.get_channel(LOG_CHANNEL_ID) or await client.fetch_channel(LOG_CHANNEL_ID)
             
                 if log_channel:
                     # Attatches Embed (if Applicable)
-                    await log_channel.send(embed=log_embed, file=log_file)
+                    await log_channel.send(embed=log_embed, file=log_files)
             
             # Deletes Message to Keep Channel Clean
             try:
