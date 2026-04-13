@@ -52,14 +52,14 @@ async def on_message(message: discord.Message):
         content_info = f"Message: {message.content}"
         
         try:
-            await message.author.kick(reason="Honeypot: Unauthorized message in restricted channel.")
+            await message.author.kick(reason="Honey Pot: Unauthorized message in restricted channel. If this was a mistake, please contact a member of moderation.")
             total_kicks += 1
             print(f"[KICKED] {message.author} ({message.author.id})")
 
             # Produces Message in Dedicated Log Channel Using user_info and content_info
             log_channel = client.get_channel(LOG_CHANNEL_ID)
             if log_channel:
-                log_embed = discord.Embed(title="Honeypot Catch!", color=discord.Color.red())
+                log_embed = discord.Embed(title="Honey Pot Kick Log", color=discord.Color.red())
                 log_embed.add_field(name="Offender", value=user_info, inline=False)
                 log_embed.add_field(name="Sent Content", value=content_info or "[No Text/Embed]", inline=False)
                 await log_channel.send(embed=log_embed)
