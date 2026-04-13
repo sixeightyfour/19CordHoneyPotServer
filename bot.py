@@ -62,7 +62,7 @@ async def on_message(message: discord.Message):
         except Exception as e:
             print(f"[ERROR] {type(e).__name__}: {e}")
 
-@tree.command(name="honeypot_status", description="Show how many users have been caught in the trap.")
+@tree.command(name="honeypot_status", description="Show how many users have been kicked.")
 async def status_command(interaction: discord.Interaction):
     await interaction.response.send_message(embed=build_status_embed())
 
