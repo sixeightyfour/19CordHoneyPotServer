@@ -55,11 +55,12 @@ async def on_message(message: discord.Message):
             # Produces Message in Dedicated Log Channel Using user_info and content_info
             log_channel = client.get_channel(LOG_CHANNEL_ID)
             if log_channel:
-                log_embed = discord.Embed(title="Honey Pot Kick Log", color=discord.Color.red())
+                log_embed = discord.Embed(title= f"Honey Pot Kick Log: Image from {message.author}", color=discord.Color.red())
                 log_header = (
-                    f" **Honey Pot Kick Log**\n"
+                    f"**Honey Pot Kick Log**\n"
                     f"**Offender:** {message.author} (ID: {message.author.id})\n"
-                    f"**Content:** {message.content or '[No Text]'}"
+                    f"**Content:** {message.content or '[No Text]'}\n"
+                    f"**Files:**"
                 )
                 
                 log_files = []
